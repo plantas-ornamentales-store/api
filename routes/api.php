@@ -13,3 +13,4 @@ Route::post('/users/create', [\App\Http\Controllers\AuthController::class, 'regi
 Route::get('/products/{id}', [ProductController::class,'show']);
 
 Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/category/{id}', [CategoryController::class, 'products']);
