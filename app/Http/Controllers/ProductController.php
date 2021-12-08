@@ -42,7 +42,13 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+      $product = Product::where('id',$id)->first();
+        if (!$product) {
+            return response()->json(["success" =>false, "error" => "El id seleccionado no existe"]);
+        }
+
+        return response()->json(["success" =>true, "data"=>$product]);
+        
     }
 
     /**
