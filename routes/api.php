@@ -11,6 +11,7 @@ Route::get('/products/landing', [ProductController::class, 'index']);
 Route::post('/users/create', [\App\Http\Controllers\AuthController::class, 'register']);
 
 Route::get('/products/{id}', [ProductController::class,'show']);
+Route::post('/products/search', [ProductController::class, 'search']);
 
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/category/{id}', [CategoryController::class, 'products']);

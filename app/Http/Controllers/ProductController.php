@@ -48,7 +48,7 @@ class ProductController extends Controller
         }
 
         return response()->json(["success" =>true, "data"=>$product]);
-        
+
     }
 
     /**
@@ -72,5 +72,16 @@ class ProductController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function search() {
+        $product = request('search');
+
+        $products = Product::where('name', 'like', '%'.$product.'%')->get();
+
+        return response()->json([
+            "success" => true,
+            "data" => $products
+        ]);
     }
 }
