@@ -19,10 +19,16 @@ class CategoryController extends Controller
 
     public function products($id) {
         $products = Product::where('category_id', $id)->get();
+        $category = Category::where('id', $id)->first();
+
+        $data = [
+            "products" => $products,
+            "category" => $category
+        ];
 
         return response()->json([
             "success" => true,
-            "data" => $products
+            "data" => $data
         ]);
     }
 }
