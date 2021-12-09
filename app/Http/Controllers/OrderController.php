@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeliveryOrder;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Product;
+use App\Models\ShippingAgent;
 use Illuminate\Http\Request;
 use Auth;
 
@@ -13,7 +15,7 @@ class OrderController extends Controller
     public function getCart() {
         $user = Auth::user();
 
-        $cart = Order::where('user_id', $user->id)->where('status', 0)->with('products')->first();
+        $cart = Order::where('user_id', $user->id)->where('status', 0)->with(['products', 'delivery'])->first();
 
         return response()->json([
             "success" => true,
@@ -77,9 +79,18 @@ class OrderController extends Controller
 
             $product->available_quantity = $product->available_quantity - $quantity;
             $product->save();
+
+            $agent = ShippingAgent::all()->random(1)->first();
+            $estimate_date = now()->addDays(rand(3,7));
+
+            $delivery = new DeliveryOrder();
+            $delivery->order_id = $new_order->id;
+            $delivery->shipping_agent_id = $agent->id;
+            $delivery->delivery_date = $estimate_date;
+            $delivery->save();
         }
 
-        $cart = Order::where('user_id', $user->id)->where('status', 0)->with('products')->first();
+        $cart = Order::where('user_id', $user->id)->where('status', 0)->with(['products', 'delivery'])->first();
 
         return response()->json([
             "success" => true,
@@ -104,6 +115,44 @@ class OrderController extends Controller
         $orderCheck->save();
 
         return response()->json(["success" => true, "data" => $order]);
+    }
+
+    public function removeProduct() {
+        $product_id = request('product_id');
+
+        $user = Auth::user();
+
+        $order = Order::where('user_id', $user->id)->where('status', 0)->first();
+
+        if (!$order) {
+            return response()->json(["success" => false, "error" => "La orden no existe."]);
+        }
+
+        $productInOrder = OrderProduct::where('order_id', $order->id)->where('product_id', $product_id)->first();
+
+        if (!$productInOrder) {
+            return response()->json(["success" => false, "error" => "El producto no existe en la orden."]);
+        }
+
+        $quantity = $productInOrder->quantity;
+
+        $productInOrder->delete();
+        $countable = OrderProduct::where('order_id', $order->id)->count();
+        $product = Product::where('id', $product_id)->first();
+        $product->available_quantity = $product->available_quantity + $quantity;
+        $product->save();
+
+        $order->total_cost = $order->total_cost - ($product->price * $quantity);
+        $order->save();
+
+        if ($countable==0) {
+            $order->status = 1;
+            $order->save();
+        }
+
+        $cart = Order::where('user_id', $user->id)->where('status', 0)->with('products')->first();
+
+        return response()->json(["success" => true, "data" => $cart]);
 
     }
 }

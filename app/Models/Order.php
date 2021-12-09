@@ -12,4 +12,8 @@ class Order extends Model
     public function products() {
         return $this->hasMany(OrderProduct::class)->with('product');
     }
+
+    public function delivery() {
+        return $this->hasOne(DeliveryOrder::class)->with('agent');
+    }
 }
