@@ -25,6 +25,8 @@ class OrderController extends Controller
 
     public function AddProduct() {
 
+        $order_id = 0;
+
         $product_id = request('product_id');
         $quantity = request('quantity');
 
@@ -43,6 +45,7 @@ class OrderController extends Controller
         $hasOrder = Order::where('user_id', $user->id)->where('status', 0)->first();
 
         if ($hasOrder) {
+            $order_id = $hasOrder->id;
             $productOrder = OrderProduct::where('order_id', $hasOrder->id)->where('product_id', $product_id)->first();
             if ($productOrder) {
                 $productOrder->quantity = $productOrder->quantity + $quantity;
@@ -70,7 +73,8 @@ class OrderController extends Controller
             $new_order->total_cost = 0;
             $new_order->save();
 
-            $hasOrder = $new_order;
+            $order_id = $new_order->id;
+            //$hasOrder = $new_order;
 
             $order = new OrderProduct();
             $order->order_id = $new_order->id;
@@ -92,7 +96,10 @@ class OrderController extends Controller
             $delivery->save();
         }
 
-        $hasOrder->total_cost = $hasOrder->total_cost + ($product->price * $quantity) ;
+        //$hasOrder->total_cost = $hasOrder->total_cost + ($product->price * $quantity) ;
+
+        $update_order = Order::where('id', $order_id)->first();
+        $update_order->total_cost = $update_order->total_cost + ($product->price * $quantity);
 
         $cart = Order::where('user_id', $user->id)->where('status', 0)->with(['products', 'delivery'])->first();
 
