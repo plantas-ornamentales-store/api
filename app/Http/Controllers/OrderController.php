@@ -67,7 +67,7 @@ class OrderController extends Controller
         } else {
             $new_order = new Order();
             $new_order->user_id = $user->id;
-           // $new_order->total_cost = ($product->price * $quantity);
+            $new_order->total_cost = 0;
             $new_order->save();
 
             $hasOrder = $new_order;
