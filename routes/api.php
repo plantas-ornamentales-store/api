@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,3 +30,7 @@ Route::group([
     Route::post('me', [AuthController::class, 'me']);
 
 });
+
+Route::post('/shopping-cart/add', [OrderController::class, 'AddProduct']);
+Route::get('/shopping-cart', [OrderController::class, 'getCart']);
+Route::post('/shopping-cart/pay', [OrderController::class, 'payOrder']);
