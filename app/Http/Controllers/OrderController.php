@@ -70,6 +70,8 @@ class OrderController extends Controller
             $new_order->total_cost = ($product->price * $quantity);
             $new_order->save();
 
+            $hasOrder = $new_order;
+
             $order = new OrderProduct();
             $order->order_id = $new_order->id;
             $order->product_id = $product->id;
@@ -89,6 +91,8 @@ class OrderController extends Controller
             $delivery->delivery_date = $estimate_date;
             $delivery->save();
         }
+
+        $hasOrder->total_cost = $hasOrder->total_cost + ($product->price * $quantity) ;
 
         $cart = Order::where('user_id', $user->id)->where('status', 0)->with(['products', 'delivery'])->first();
 
