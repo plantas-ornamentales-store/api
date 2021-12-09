@@ -100,6 +100,7 @@ class OrderController extends Controller
 
         $update_order = Order::where('id', $order_id)->first();
         $update_order->total_cost = $update_order->total_cost + ($product->price * $quantity);
+        $update_order->save();
 
         $cart = Order::where('user_id', $user->id)->where('status', 0)->with(['products', 'delivery'])->first();
 
