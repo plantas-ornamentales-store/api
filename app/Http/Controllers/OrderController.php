@@ -47,7 +47,7 @@ class OrderController extends Controller
             if ($productOrder) {
                 $productOrder->quantity = $productOrder->quantity + $quantity;
                 $productOrder->save();
-                $hasOrder->total_cost = $hasOrder->total_cost + ($product->price * $productOrder->quantity);
+               // $hasOrder->total_cost = $hasOrder->total_cost + ($product->price * $productOrder->quantity);
                 $hasOrder->save();
                 $product->available_quantity = $product->available_quantity - $quantity;
                 $product->save();
@@ -59,7 +59,7 @@ class OrderController extends Controller
                 $order->quantity = $quantity;
                 $order->save();
 
-                $hasOrder->total_cost = $hasOrder->total_cost + ($product->price * $quantity);
+              //  $hasOrder->total_cost = $hasOrder->total_cost + ($product->price * $quantity);
                 $hasOrder->save();
                 $product->available_quantity = $product->available_quantity - $quantity;
                 $product->save();
@@ -67,7 +67,7 @@ class OrderController extends Controller
         } else {
             $new_order = new Order();
             $new_order->user_id = $user->id;
-            $new_order->total_cost = ($product->price * $quantity);
+           // $new_order->total_cost = ($product->price * $quantity);
             $new_order->save();
 
             $hasOrder = $new_order;
